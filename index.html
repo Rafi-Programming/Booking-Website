@@ -6,6 +6,7 @@
 <title>First Garage Web Development</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 html {
@@ -244,13 +245,44 @@ style="background-image:url('https://images.unsplash.com/photo-1518770660439-463
 </footer>
 
 <script>
+const SUPABASE_URL = "https://bmoilhluekivnsoyeiqn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ibuDidRSljwl6kpbmh3HSw_1QYX7rhT";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// efek navbar
 window.addEventListener("scroll", () => {
   const nav = document.querySelector("nav");
-
   if(window.scrollY > 50){
     nav.classList.add("shadow-2xl");
   } else {
     nav.classList.remove("shadow-2xl");
+  }
+});
+
+// kirim form ke supabase
+document.querySelector("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const inputs = document.querySelectorAll("input, textarea");
+
+  const data = {
+    name: inputs[0].value,
+    phone: inputs[1].value,
+    business: inputs[2].value,
+    details: inputs[3].value
+  };
+
+  const { error } = await client
+    .from("reservations")
+    .insert([data]);
+
+  if(error){
+    alert("Gagal mengirim!");
+    console.log(error);
+  } else {
+    alert("Reservation berhasil dikirim!");
+    e.target.reset();
   }
 });
 </script>
